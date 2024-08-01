@@ -21,22 +21,6 @@ def build_all(mode)
   sh "review-compile --target=#{mode} --footnotetext --stylesheet=style.css"
 end
 
-def convert_summary
-  catalog = Hash.new { |h, k| h[k] = [] }
-  catalog['PREDEF'] = ['README.re']
-  File.read("SUMMARY.md").scan(/\((.*.md)/).flatten.each do |file|
-    case file
-    when /appendix/
-      catalog['APPENDIX'] << file.ext('.re')
-    when /postdef/
-      catalog['POSTDEF'] << file.ext('.re')
-    else
-      catalog['CHAPS'] << file.ext('.re')
-    end
-  end
-  File.write(CATALOG_FILE, YAML.dump(catalog))
-end
-
 task :default => :pdf
 
 desc "build html (Usage: rake build re=target.re)"
@@ -72,16 +56,12 @@ task :web => WEBROOT
 desc 'generate EPUB file'
 task :epub => BOOK_EPUB
 
-SRC = FileList['*.md'] + %w(SUMMARY.md)
+SRC = FileList['*.md']
 OBJ = SRC.ext('re') + [CATALOG_FILE]
 INPUT = OBJ + [CONFIG_FILE, COVER]
 
 rule '.re' => '.md' do |t|
   sh "bundle exec md2review --render-link-in-footnote #{t.source} > #{t.name}"
-end
-
-file CATALOG_FILE => 'SUMMARY.md' do |t|
-  convert_summary
 end
 
 file BOOK_PDF => INPUT do
