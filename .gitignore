@@ -1,6 +1,4 @@
-_book
 .bundle
-catalog.yml
 *.re
 *.pdf
 *.html
