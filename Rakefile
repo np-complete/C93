@@ -5,7 +5,6 @@ require 'yaml'
 BOOK = "book"
 BOOK_PDF = BOOK+".pdf"
 BOOK_EPUB = BOOK+".epub"
-CATALOG_FILE = "catalog.yml"
 CONFIG_FILE = "config.yml"
 WEBROOT = "webroot"
 COVER = "titlepage.tex"
@@ -57,7 +56,7 @@ desc 'generate EPUB file'
 task :epub => BOOK_EPUB
 
 SRC = FileList['*.md']
-OBJ = SRC.ext('re') + [CATALOG_FILE]
+OBJ = SRC.ext('re')
 INPUT = OBJ + [CONFIG_FILE, COVER]
 
 rule '.re' => '.md' do |t|
